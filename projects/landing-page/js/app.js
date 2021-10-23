@@ -31,22 +31,6 @@ let timer = null;
  * Start Helper Functions
  * 
 */
-// function isSectionIsVisible(section){
-//     let boundingRect = section.getBoundingClientRect();
-//     let visible = boundingRect.bottom > 0 && boundingRect.bottom < window.innerHeight && boundingRect.top < window.innerHeight && boundingRect.top >= -1;
-//     return visible;
-// }
-
-function hideNavBar(){
-    console.log(scrolled);
-    let currScrollPosition = window.pageYOffset;
-    if (prevScrollPosition == currScrollPosition) {
-        document.querySelector('#navbar__list').style.display = "none";
-    }else{
-        document.querySelector('#navbar__list').style.display = "block";
-    }
-    prevScrollPosition = currScrollPosition;
-}
 
 /**
  * End Helper Functions
@@ -61,15 +45,12 @@ document.addEventListener('DOMContentLoaded', function(){
     addSection();
     // build the nav
     buildNavMenu();
-
     // Add class 'active' to section when near top of viewport
-    // document.addEventListener('scroll', setActiveSection);
     createObserver();
-
     // Scroll to anchor ID using scrollTO event
     navBarList = document.querySelector('#navbar__list');
     navBarList.addEventListener('click', scrollToSection, false);
-    // Manage show/ hide scroll to top button
+    // Manage show/hide scroll to top button and navBar visibility
     document.addEventListener('scroll', function(){
         showScrollToTop();
         handleNavBarVisibility();
@@ -113,7 +94,6 @@ navBarList = document.querySelector('#navbar__list');
 sections = document.querySelectorAll('section');
 // create new Fragment
 let navDocFragment = document.createDocumentFragment();
-
     sections.forEach(function(section){
         let li = document.createElement('li');
         let a = document.createElement('a');
@@ -144,11 +124,6 @@ function scrollToSection(e){
         // get section
         let section = document.querySelector('#'+e.target.dataset.nav);
         section.scrollIntoView({behavior: 'smooth'});
-        // window.scrollTo({
-        //     top: section.offsetTop,
-        //     behavior: 'smooth',
-        //   })
-
     }
 }
 // Set sections as active
@@ -166,13 +141,13 @@ function createObserver(){
   sections = document.querySelectorAll('section');
   // observe each section
   sections.forEach(function(section){
-  observer.observe(section);
+    observer.observe(section);
   });
 }
 // observer callback
-function setIntersectedToActive(entries){
-    entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+function setIntersectedToActive(elements){
+    elements.forEach((element) => {
+        if (element.isIntersecting) {
             // reomve your-active-class from all sections
             document.querySelectorAll('.your-active-class').forEach((el) => {
                     el.classList.remove('your-active-class');
@@ -182,7 +157,7 @@ function setIntersectedToActive(entries){
                 el.classList.remove('active-class');
             });
             // set section to target of intersection entry
-            let section = entry.target;
+            let section = element.target;
             // set your-active-class to intersecting section
             section.classList.add('your-active-class');
             // get navItem
@@ -192,20 +167,22 @@ function setIntersectedToActive(entries){
             }
       });
 }
+// show scroll to top button if scroll exceeds 50 px
 function showScrollToTop(){
     if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
         scrollToTopBtn.setAttribute('style', 'display: block');
       } else {
         scrollToTopBtn.setAttribute('style', 'display: none');
       }
-    }
-
+}
+// scroll to the top of the page if the scrollToTop btn has been clicked
 function scrollToTop(){
     window.scrollTo({
         top: 0,
         behavior: 'smooth',
-    })
+    });
 }
+// if user scrolls during the timer, the nav bar is shown, elsewise it's hidden
 function handleNavBarVisibility(){    
     if(timer !== null) {
         clearTimeout(timer);
@@ -217,23 +194,4 @@ function handleNavBarVisibility(){
         }
     }, 5000);
 }
-// function setActiveSection(){
-//     // Hide nav bar while not scrolling
-//     // setTimeout(function(){hideNavBar()},4000);
-//     sections = document.querySelectorAll('section');
-//     sections.forEach(function(section){
-//         if(isSectionIsVisible(section)){
-//             // set active class to section
-//             section.classList.add('your-active-class');
-//             // set active class to nav item
-//             document.querySelector('#nav_'+section.id).classList.add('active-class');
-//          }else{
-//             // remove active class to section
-//             section.classList.remove('your-active-class');
-//             // set active class to nav item
-//             document.querySelector('#nav_'+section.id).classList.remove('active-class');
-//         }
-//     });
-// }
-
 
